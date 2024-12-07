@@ -1,0 +1,61 @@
+<div class="col-12">
+    <div class="form-container">
+        <div class="form-box">
+            <h2 class="form-title"><img [src]="formConfig.imgUrl" alt="Terralogic Logo">{{ formConfig.title }}</h2><hr>
+            <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+            <div *ngFor="let field of formConfig.fields" class="form-field">
+                <div class="field-label">
+                    <label>{{ field.label }}</label>
+                </div>
+                <ng-container [ngSwitch]="field.type">
+                    <input class="form-control"
+                        *ngSwitchCase="'text'"
+                        [formControlName]="field.name"
+                        [type]="field.type"
+                    />
+                    <input class="form-control"
+                        *ngSwitchCase="'email'"
+                        [formControlName]="field.name"
+                        [type]="field.type"
+                    />
+                    <div class="radio" *ngSwitchCase="'radio'">
+                        <label *ngFor="let option of field.options">
+                        <input
+                            type="radio"
+                            [formControlName]="field.name"
+                            [value]="option"
+                        />
+                        {{ option }}
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <input
+                        *ngSwitchCase="'checkbox'"
+                        type="checkbox"
+                        [formControlName]="field.name"
+                    />
+                    </div>
+                </ng-container>
+                <div *ngIf="formGroup.get(field.name)?.invalid && formGroup.get(field.name)?.touched" class="error">
+                    <span *ngIf="formGroup.get(field.name)?.errors?.['required']">This field is required.</span>
+                    <span *ngIf="field.validations?.minLength">
+                        Minimum length is {{ field.validations?.minLength }}.
+                    </span>              
+                    <span *ngIf="field.validations?.pattern && formGroup.get(field.name)?.errors?.['pattern']">
+                    Invalid format.
+                    </span>
+                </div>          
+            </div>
+            <div class="d-flex justify-content-start gap-2 buttons-group">
+                <button type="button" class="btn btn-default" (click)="onReset()">Reset</button>
+                <button type="submit" class="btn btn-primary" [disabled]="formGroup.invalid">Submit</button>
+            </div>
+            </form>     
+            <div class="submitted-values" *ngIf="submittedValues">
+                <h3>Submitted Values:</h3>
+                <pre>{{ submittedValues | json }}</pre>
+            </div>
+        </div>
+      </div>
+</div>
+  
